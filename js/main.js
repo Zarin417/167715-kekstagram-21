@@ -8,7 +8,6 @@ const USERS_COMMENTS = [
   `Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.`,
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
-
 const USERS_NAMES = [
   `Паль Ачино`,
   `Доберт Ре Ниро`,
@@ -20,7 +19,6 @@ const USERS_NAMES = [
   `Чеки Джан`,
   `Дин Визель`
 ];
-
 const PHOTOS_DESCRIPTIONS = [
   `Пляж возле отеля с рядами шезлонгов`,
   `Указатель направления дороги на пляж`,
@@ -48,11 +46,10 @@ const PHOTOS_DESCRIPTIONS = [
   `Вид сцены с трибун на концерте`,
   `Белый Джип проезжающий через водоем с ревущими бегемотами`
 ];
-
-const descriptionsAmount = 25;
-const avatarsAmount = 6;
-const likesMin = 15;
-const likesMax = 200;
+const DESCRIPTIONS_AMOUNT = 25;
+const AVATARS_AMOUNT = 6;
+const LIKES_MIN = 15;
+const LIKES_MAX = 200;
 
 // Get a random number in a given range
 const getRandomInteger = (min, max) => {
@@ -63,7 +60,7 @@ const getRandomInteger = (min, max) => {
 // Get a random comment from user
 const getRandomComment = (comments, names) => {
   const comment = {
-    avatar: `img/avatar-${getRandomInteger(0, avatarsAmount - 1)}.svg`,
+    avatar: `img/avatar-${getRandomInteger(0, AVATARS_AMOUNT - 1)}.svg`,
     message: comments[getRandomInteger(0, comments.length - 1)],
     name: names[getRandomInteger(0, names.length - 1)]
   };
@@ -74,7 +71,7 @@ const getRandomComment = (comments, names) => {
 const getRandomAmountComments = (comments, names) => {
   const randomAmountComments = [];
 
-  for (let i = 0; i < getRandomInteger(1, avatarsAmount); i++) {
+  for (let i = 0; i < getRandomInteger(1, AVATARS_AMOUNT); i++) {
     randomAmountComments.push(getRandomComment(comments, names));
   }
   return randomAmountComments;
@@ -84,11 +81,11 @@ const getRandomAmountComments = (comments, names) => {
 const getPhotoDescriptionArray = (description, comments, names) => {
   let photoDescriptionArray = [];
 
-  for (let i = 0; i < descriptionsAmount; i++) {
+  for (let i = 0; i < DESCRIPTIONS_AMOUNT; i++) {
     photoDescriptionArray.push({
       url: `photos/${i + 1}.jpg`,
       description: `${description[i]}`,
-      likes: getRandomInteger(likesMin, likesMax),
+      likes: getRandomInteger(LIKES_MIN, LIKES_MAX),
       comments: getRandomAmountComments(comments, names)
     });
   }
@@ -98,11 +95,10 @@ const getPhotoDescriptionArray = (description, comments, names) => {
 const photoDescription = getPhotoDescriptionArray(PHOTOS_DESCRIPTIONS, USERS_COMMENTS, USERS_NAMES);
 
 // Create DOM-element based on template
-const pictureTemplate = document.querySelector(`#picture`)
-  .content
-  .querySelector(`.picture`);
-
 const createPicture = (descriptionItem) => {
+  const pictureTemplate = document.querySelector(`#picture`)
+    .content
+    .querySelector(`.picture`);
   const pictureElement = pictureTemplate.cloneNode(true);
   const commentsLength = descriptionItem.comments.length;
   pictureElement.querySelector(`.picture__img`).src = descriptionItem.url;
@@ -112,11 +108,15 @@ const createPicture = (descriptionItem) => {
   return pictureElement;
 };
 
-const fragment = document.createDocumentFragment();
+// Rendering of created elements
+const insertFragment = () => {
+  const picturesBlock = document.querySelector(`.pictures`);
+  const fragment = document.createDocumentFragment();
 
-for (let i = 0; i < photoDescription.length; i++) {
-  fragment.appendChild(createPicture(photoDescription[i]));
-}
+  for (let i = 0; i < photoDescription.length; i++) {
+    fragment.appendChild(createPicture(photoDescription[i]));
+  }
+  picturesBlock.appendChild(fragment);
+};
 
-const picturesBlock = document.querySelector(`.pictures`);
-picturesBlock.appendChild(fragment);
+insertFragment();
