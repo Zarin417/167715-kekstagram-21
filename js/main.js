@@ -50,6 +50,13 @@ const DESCRIPTIONS_AMOUNT = 25;
 const AVATARS_AMOUNT = 6;
 const LIKES_MIN = 15;
 const LIKES_MAX = 200;
+const bigPictureContainer = document.querySelector(`.big-picture`);
+const commentCount = bigPictureContainer.querySelector(`.social__comment-count`);
+const commentsLoader = bigPictureContainer.querySelector(`.comments-loader`);
+
+commentCount.classList.add(`hidden`);
+commentsLoader.classList.add(`hidden`);
+document.body.classList.add(`modal-open`);
 
 // Get a random number in a given range
 const getRandomInteger = (min, max) => {
@@ -60,7 +67,7 @@ const getRandomInteger = (min, max) => {
 // Get a random comment from user
 const getRandomComment = (comments, names) => {
   const comment = {
-    avatar: `img/avatar-${getRandomInteger(0, AVATARS_AMOUNT - 1)}.svg`,
+    avatar: `img/avatar-${getRandomInteger(1, AVATARS_AMOUNT)}.svg`,
     message: comments[getRandomInteger(0, comments.length - 1)],
     name: names[getRandomInteger(0, names.length - 1)]
   };
@@ -94,7 +101,7 @@ const getPhotoDescriptionArray = (description, comments, names) => {
 
 const photoDescription = getPhotoDescriptionArray(PHOTOS_DESCRIPTIONS, USERS_COMMENTS, USERS_NAMES);
 
-// Create DOM-element based on template
+// Create picture as DOM-element based on template
 const createPicture = (descriptionItem) => {
   const pictureTemplate = document.querySelector(`#picture`)
     .content
@@ -108,8 +115,8 @@ const createPicture = (descriptionItem) => {
   return pictureElement;
 };
 
-// Rendering of created elements
-const insertFragment = () => {
+// Rendering of created pictures elements
+const renderPictures = () => {
   const picturesBlock = document.querySelector(`.pictures`);
   const fragment = document.createDocumentFragment();
 
@@ -119,4 +126,36 @@ const insertFragment = () => {
   picturesBlock.appendChild(fragment);
 };
 
-insertFragment();
+// Create and insert comments list for picture
+const getCommentsList = (pictureComments) => {
+  const commentsBlock = bigPictureContainer.querySelector(`.social__comments`);
+  const commentItemTemplate = commentsBlock.querySelector(`.social__comment`);
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < pictureComments.comments.length; i++) {
+    const commentItem = commentItemTemplate.cloneNode(true);
+    commentItem.querySelector(`.social__picture`).src = pictureComments.comments[i].avatar;
+    commentItem.querySelector(`.social__picture`).alt = pictureComments.comments[i].name;
+    commentItem.querySelector(`.social__text`).textContent = pictureComments.comments[i].message;
+    fragment.appendChild(commentItem);
+  }
+  commentsBlock.appendChild(fragment);
+};
+
+// Create and show big picture
+const showBigPicture = (pictureInfo) => {
+  bigPictureContainer.classList.remove(`hidden`);
+  const bigPictureImg = bigPictureContainer.querySelector(`.big-picture__img img`);
+  const likesAmount = bigPictureContainer.querySelector(`.likes-count`);
+  const commentsAmount = bigPictureContainer.querySelector(`.comments-count`);
+  const imageCaption = bigPictureContainer.querySelector(`.social__caption`);
+  bigPictureImg.src = pictureInfo.url;
+  bigPictureImg.alt = pictureInfo.description;
+  likesAmount.textContent = pictureInfo.likes.toString();
+  commentsAmount.textContent = pictureInfo.comments.length.toString();
+  imageCaption.textContent = pictureInfo.description;
+  getCommentsList(pictureInfo);
+};
+
+renderPictures();
+showBigPicture(photoDescription[0]);
