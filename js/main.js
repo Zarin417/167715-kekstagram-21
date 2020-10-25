@@ -126,7 +126,7 @@ const renderPictures = () => {
   picturesBlock.appendChild(fragment);
 };
 
-// Create and render comments list for picture
+// Create and insert comments list for picture
 const getCommentsList = (pictureComments) => {
   const commentsBlock = bigPictureContainer.querySelector(`.social__comments`);
   const commentItemTemplate = commentsBlock.querySelector(`.social__comment`);
