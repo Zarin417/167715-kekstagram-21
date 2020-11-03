@@ -50,13 +50,17 @@ const DESCRIPTIONS_AMOUNT = 25;
 const AVATARS_AMOUNT = 6;
 const LIKES_MIN = 15;
 const LIKES_MAX = 200;
-const MIN_IMG_SCALE = 25;
-const MAX_IMG_SCALE = 100;
 const IMG_SCALE_STEP = 25;
-const ONE_HUNDRED_PERCENT = 100;
+const MIN_IMG_SCALE = IMG_SCALE_STEP;
+const MAX_IMG_SCALE = 100;
+const MAX_EFFECT_PERCENTAGE = 100;
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAGS_MAX_AMOUNT = 5;
 const HASH_TAG_REGEXP = /^#[\wа-яё]{1,19}$/;
+const COMMENT_INSERTION_POSITION = 2;
+const PERCENTAGE = MAX_IMG_SCALE;
+const BLUR_MAX_AMOUNT_VALUE = 4;
+const BRIGHTNESS_MAX_AMOUNT_VALUE = 3;
 const bigPictureContainer = document.querySelector(`.big-picture`);
 const commentsBlock = bigPictureContainer.querySelector(`.social__comments`);
 const commentCount = bigPictureContainer.querySelector(`.social__comment-count`);
@@ -71,9 +75,11 @@ const imgSizeScale = imgUploadForm.querySelector(`.scale`);
 const imgSizeScaleSmaller = imgSizeScale.querySelector(`.scale__control--smaller`);
 const imgSizeScaleBigger = imgSizeScale.querySelector(`.scale__control--bigger`);
 const imgSizeScaleValue = imgSizeScale.querySelector(`.scale__control--value`);
-const imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview img`);
+const imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
+const imgUploadPreviewImage = imgUploadPreview.querySelector(`img`);
 const effectLevel = imgUploadForm.querySelector(`.effect-level`);
 const effectsList = imgUploadForm.querySelector(`.effects__list`);
+const filterDefault = effectsList.querySelector(`#effect-none`);
 const effectLevelValue = effectLevel.querySelector(`.effect-level__value`);
 const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
 const effectLevelPin = effectLevelLine.querySelector(`.effect-level__pin`);
@@ -186,7 +192,7 @@ renderPictures();
 // Add listener for open and close big picture
 const removeCommentsListAppendedChild = () => {
   const socialComment = commentsBlock.querySelectorAll(`.social__comment`);
-  for (let i = 2; i < socialComment.length; i++) {
+  for (let i = COMMENT_INSERTION_POSITION; i < socialComment.length; i++) {
     commentsBlock.removeChild(socialComment[i]);
   }
 };
@@ -222,14 +228,14 @@ pictures.addEventListener(`click`, bigPictureOpenHandler);
 const getSmallerSize = (scaleValue) => {
   if (scaleValue > MIN_IMG_SCALE) {
     imgSizeScaleValue.value = `${scaleValue - IMG_SCALE_STEP}%`;
-    imgUploadPreview.style.transform = `scale(${(scaleValue - IMG_SCALE_STEP) / ONE_HUNDRED_PERCENT})`;
+    imgUploadPreview.style.transform = `scale(${(scaleValue - IMG_SCALE_STEP) / MAX_IMG_SCALE})`;
   }
 };
 
 const getBiggerSize = (scaleValue) => {
   if (scaleValue < MAX_IMG_SCALE) {
     imgSizeScaleValue.value = `${scaleValue + IMG_SCALE_STEP}%`;
-    imgUploadPreview.style.transform = `scale(${(scaleValue + IMG_SCALE_STEP) / ONE_HUNDRED_PERCENT})`;
+    imgUploadPreview.style.transform = `scale(${(scaleValue + IMG_SCALE_STEP) / MAX_IMG_SCALE})`;
   }
 };
 
@@ -245,42 +251,42 @@ const imgSizeScaleHandler = (evt) => {
 // Listener for image filter icons
 const effectListHandler = (evt) => {
   if (evt.target.matches(`input[type="radio"]`)) {
-    imgUploadPreview.removeAttribute(`class`);
+    imgUploadPreviewImage.removeAttribute(`class`);
     effectLevelValue.setAttribute(`value`, `0`);
-    imgUploadPreview.style.filter = `none`;
+    imgUploadPreviewImage.style.filter = `none`;
     if (evt.target.attributes[4].value === `none`) {
       effectLevel.classList.add(`hidden`);
     } else {
       effectLevel.classList.remove(`hidden`);
-      imgUploadPreview.classList.add(`effects__preview--${evt.target.attributes[4].value}`);
+      imgUploadPreviewImage.classList.add(`effects__preview--${evt.target.attributes[4].value}`);
     }
   }
 };
 
 const effectLevelPinMouseupHandler = () => {
-  const imgClass = imgUploadPreview.getAttribute(`class`);
+  const imgClass = imgUploadPreviewImage.getAttribute(`class`);
   const levelLineSize = window.getComputedStyle(effectLevelLine).getPropertyValue(`width`);
   const pinPosition = window.getComputedStyle(effectLevelPin).getPropertyValue(`left`);
-  const leftPosition = Math.round((parseInt(pinPosition, 10) / parseInt(levelLineSize, 10)) * ONE_HUNDRED_PERCENT);
+  const leftPosition = Math.round((parseInt(pinPosition, 10) / parseInt(levelLineSize, 10)) * PERCENTAGE);
   switch (imgClass) {
     case `effects__preview--chrome`:
-      imgUploadPreview.style.filter = `grayscale(${leftPosition}%)`;
+      imgUploadPreviewImage.style.filter = `grayscale(${leftPosition}%)`;
       break;
 
     case `effects__preview--sepia`:
-      imgUploadPreview.style.filter = `sepia(${leftPosition}%)`;
+      imgUploadPreviewImage.style.filter = `sepia(${leftPosition}%)`;
       break;
 
     case `effects__preview--marvin`:
-      imgUploadPreview.style.filter = `invert(${leftPosition}%)`;
+      imgUploadPreviewImage.style.filter = `invert(${leftPosition}%)`;
       break;
 
     case `effects__preview--phobos`:
-      imgUploadPreview.style.filter = `blur(${Math.floor(leftPosition / ONE_HUNDRED_PERCENT * 3.9)}px)`;
+      imgUploadPreviewImage.style.filter = `blur(${Math.floor(leftPosition / MAX_EFFECT_PERCENTAGE * BLUR_MAX_AMOUNT_VALUE)}px)`;
       break;
 
     case `effects__preview--heat`:
-      imgUploadPreview.style.filter = `brightness(${Math.ceil(leftPosition / ONE_HUNDRED_PERCENT * 3)})`;
+      imgUploadPreviewImage.style.filter = `brightness(${Math.ceil(leftPosition / MAX_EFFECT_PERCENTAGE * BRIGHTNESS_MAX_AMOUNT_VALUE)})`;
       break;
   }
 };
@@ -296,13 +302,13 @@ const checkHashtagsDublicate = (hashtag, hashtagIndex, hashtagsArray) => {
 
 const reportErrorMessage = (text) => {
   hashtagInput.setCustomValidity(text);
-  hashtagInput.style.backgroundColor = `rgb(255, 190, 184)`;
+  hashtagInput.classList.add(`invalid__text`);
   imgUploadForm.reportValidity();
 };
 
 const hashtagInputValidationHandler = () => {
   const hashtagsArr = hashtagInput.value.toLowerCase().trim().split(` `);
-  hashtagInput.style.backgroundColor = `white`;
+  hashtagInput.classList.remove(`invalid__text`);
   hashtagInput.setCustomValidity(``);
   if (hashtagInput.value !== ``) {
     for (let hashtag of hashtagsArr) {
@@ -341,6 +347,11 @@ const imgUploadOverlayClose = () => {
   imgUploadField.value = ``;
   imgUploadOverlay.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
+  imgSizeScaleValue.value = `${MAX_IMG_SCALE}%`;
+  imgUploadPreview.style.transform = `none`;
+  imgUploadPreviewImage.style.filter = `none`;
+  imgUploadPreviewImage.removeAttribute(`class`);
+  filterDefault.checked = `true`;
 };
 
 const imgUploadOverlayEscPressHandler = (evt) => {
@@ -364,10 +375,11 @@ const imgUploadOverlayCloseHandler = () => {
 const imgUploadOverlayOpenHandler = () => {
   imgUploadOverlay.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
+  effectLevel.classList.add(`hidden`);
   document.addEventListener(`keydown`, imgUploadOverlayEscPressHandler);
   imgUploadCancel.addEventListener(`click`, imgUploadOverlayCloseHandler);
   imgSizeScale.addEventListener(`click`, imgSizeScaleHandler);
-  effectsList.addEventListener(`change`, effectListHandler);
+  effectsList.addEventListener(`change`, effectListHandler, true);
   effectLevelPin.addEventListener(`mouseup`, effectLevelPinMouseupHandler);
   hashtagInput.addEventListener(`input`, hashtagInputValidationHandler);
   imgUploadForm.addEventListener(`submit`, imgUploadFormHandler);

@@ -1449,3 +1449,11 @@ main {
 .hidden {
   display: none;
 }
+
+/*
+* Стили сообщений об ошибке для использования js
+*/
+
+.invalid__text {
+  background-color: rgb(255, 190, 184);
+};
