@@ -197,32 +197,50 @@ const removeCommentsListAppendedChild = () => {
   }
 };
 
-const bigPictureEscPressHandler = (evt) => {
-  if (evt.key === `Escape`) {
-    evt.preventDefault();
-    removeCommentsListAppendedChild();
-    bigPictureContainer.classList.add(`hidden`);
-  }
+const openBigPicture = (targetValue) => {
+  showBigPicture(photoDescription[targetValue.match(/\d+/) - 1]);
+  bigPictureContainer.classList.remove(`hidden`);
+  bigPictureClose.addEventListener(`click`, bigPictureCloseHandler);
+  document.addEventListener(`keydown`, bigPictureEscPressHandler);
 };
 
-const bigPictureOpenHandler = (evt) => {
-  if (evt.target.classList.contains(`picture__img`)) {
-    const targetValue = evt.target.attributes[1].value;
-    showBigPicture(photoDescription[targetValue.match(/\d+/) - 1]);
-    bigPictureContainer.classList.remove(`hidden`);
-    bigPictureClose.addEventListener(`click`, bigPictureCloseHandler);
-    document.addEventListener(`keydown`, bigPictureEscPressHandler);
-  }
-};
-
-const bigPictureCloseHandler = () => {
+const closeBigPicture = () => {
   removeCommentsListAppendedChild();
   bigPictureContainer.classList.add(`hidden`);
   document.removeEventListener(`keydown`, bigPictureEscPressHandler);
   bigPictureClose.removeEventListener(`click`, bigPictureCloseHandler);
 };
 
-pictures.addEventListener(`click`, bigPictureOpenHandler);
+const bigPictureEscPressHandler = (evt) => {
+  if (evt.key === `Escape`) {
+    evt.preventDefault();
+    closeBigPicture();
+  }
+};
+
+const pictureEnterPressHandler = (evt) => {
+  if (evt.key === `Enter`) {
+    if (evt.target.classList.contains(`picture`)) {
+      evt.preventDefault();
+      const targetValue = evt.target.childNodes[1].attributes[1].value;
+      openBigPicture(targetValue);
+    }
+  }
+};
+
+const pictureClickHandler = (evt) => {
+  if (evt.target.classList.contains(`picture__img`)) {
+    const targetValue = evt.target.attributes[1].value;
+    openBigPicture(targetValue);
+  }
+};
+
+const bigPictureCloseHandler = () => {
+  closeBigPicture();
+};
+
+pictures.addEventListener(`click`, pictureClickHandler, true);
+pictures.addEventListener(`keydown`, pictureEnterPressHandler, true);
 
 // Listener for image size scale
 const getSmallerSize = (scaleValue) => {
