@@ -55,9 +55,9 @@
   // Get a random comment from user
   const getRandomComment = (comments, names) => {
     const comment = {
-      avatar: `img/avatar-${window.util.randomInt(1, AVATARS_AMOUNT)}.svg`,
-      message: comments[window.util.randomInt(0, comments.length - 1)],
-      name: names[window.util.randomInt(0, names.length - 1)]
+      avatar: `img/avatar-${window.util.getRandomInt(1, AVATARS_AMOUNT)}.svg`,
+      message: comments[window.util.getRandomInt(0, comments.length - 1)],
+      name: names[window.util.getRandomInt(0, names.length - 1)]
     };
 
     return comment;
@@ -67,7 +67,7 @@
   const getRandomAmountComments = (comments, names) => {
     let randomAmountComments = [];
 
-    for (let i = 0; i < window.util.randomInt(1, AVATARS_AMOUNT); i++) {
+    for (let i = 0; i < window.util.getRandomInt(1, AVATARS_AMOUNT); i++) {
       randomAmountComments.push(getRandomComment(comments, names));
     }
 
@@ -82,7 +82,7 @@
       photoDescriptionArray.push({
         url: `photos/${i + 1}.jpg`,
         description: `${description[i]}`,
-        likes: window.util.randomInt(LIKES_MIN, LIKES_MAX),
+        likes: window.util.getRandomInt(LIKES_MIN, LIKES_MAX),
         comments: getRandomAmountComments(comments, names)
       });
     }
