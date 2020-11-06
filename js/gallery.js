@@ -6,6 +6,7 @@
 
   // Add listener for open and close big picture
   const openBigPicture = (targetValue) => {
+    document.body.classList.add(`modal-open`);
     window.preview.show(window.data.photoDescription[targetValue.match(/\d+/) - 1]);
     bigPictureContainer.classList.remove(`hidden`);
     bigPictureClose.addEventListener(`click`, bigPictureCloseHandler);
@@ -13,6 +14,7 @@
   };
 
   const closeBigPicture = () => {
+    document.body.classList.remove(`modal-open`);
     window.preview.removeComments();
     bigPictureContainer.classList.add(`hidden`);
     document.removeEventListener(`keydown`, bigPictureEscPressHandler);

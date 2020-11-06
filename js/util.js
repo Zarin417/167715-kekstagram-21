@@ -7,6 +7,6 @@
   };
 
   window.util = {
-    randomInt: getRandomInteger
+    getRandomInt: getRandomInteger
   };
 })();

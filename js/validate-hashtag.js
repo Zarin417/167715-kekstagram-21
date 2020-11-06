@@ -54,7 +54,7 @@
     }
   };
 
-  window.uploadHashtag = {
+  window.validateHashtag = {
     setHashtagHandler: hashtagInputValidationHandler
   };
 })();

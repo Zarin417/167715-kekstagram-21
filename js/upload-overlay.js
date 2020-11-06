@@ -48,9 +48,9 @@
     imgUploadOverlayClose();
     document.removeEventListener(`keydown`, imgUploadOverlayEscPressHandler);
     imgSizeScale.removeEventListener(`click`, window.uploadSize.setClickHandler);
-    effectsList.removeEventListener(`change`, window.uploadEffect.setItemClickHandler);
-    effectLevelPin.removeEventListener(`mouseup`, window.uploadEffect.setPinMouseUpHandler);
-    hashtagInput.removeEventListener(`input`, window.uploadHashtag.setHashtagHandler);
+    effectsList.removeEventListener(`change`, window.uploadEffects.setItemClickHandler);
+    effectLevelPin.removeEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
+    hashtagInput.removeEventListener(`input`, window.validateHashtag.setHashtagHandler);
     imgUploadForm.removeEventListener(`submit`, imgUploadFormHandler);
     imgUploadCancel.removeEventListener(`click`, imgUploadOverlayCloseHandler);
   };
@@ -62,9 +62,9 @@
     document.addEventListener(`keydown`, imgUploadOverlayEscPressHandler);
     imgUploadCancel.addEventListener(`click`, imgUploadOverlayCloseHandler);
     imgSizeScale.addEventListener(`click`, window.uploadSize.setClickHandler);
-    effectsList.addEventListener(`change`, window.uploadEffect.setItemClickHandler, true);
-    effectLevelPin.addEventListener(`mouseup`, window.uploadEffect.setPinMouseUpHandler);
-    hashtagInput.addEventListener(`input`, window.uploadHashtag.setHashtagHandler);
+    effectsList.addEventListener(`change`, window.uploadEffects.setItemClickHandler, true);
+    effectLevelPin.addEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
+    hashtagInput.addEventListener(`input`, window.validateHashtag.setHashtagHandler);
     imgUploadForm.addEventListener(`submit`, imgUploadFormHandler);
   };
 
