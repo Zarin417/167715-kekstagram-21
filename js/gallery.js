@@ -4,10 +4,15 @@
   const bigPictureContainer = document.querySelector(`.big-picture`);
   const bigPictureClose = bigPictureContainer.querySelector(`.big-picture__cancel`);
 
+  const getEventTargetIndex = (target) => {
+    const targetIndex = target.attributes[1].value.match(/\d+/) - 1;
+    return targetIndex;
+  };
+
   // Add listener for open and close big picture
-  const openBigPicture = (targetValue) => {
+  const openBigPicture = (pictureTarget, pictureIndex) => {
     document.body.classList.add(`modal-open`);
-    window.preview.show(window.util.photosData[targetValue.match(/\d+/) - 1]);
+    window.preview.show(pictureTarget, pictureIndex);
     bigPictureContainer.classList.remove(`hidden`);
     bigPictureClose.addEventListener(`click`, bigPictureCloseHandler);
     document.addEventListener(`keydown`, bigPictureEscPressHandler);
@@ -32,16 +37,18 @@
     if (evt.key === `Enter`) {
       if (evt.target.classList.contains(`picture`)) {
         evt.preventDefault();
-        const targetValue = evt.target.childNodes[1].attributes[1].value;
-        openBigPicture(targetValue);
+        const pictureData = evt.target.childNodes[1];
+        const targetIndex = getEventTargetIndex(pictureData);
+        openBigPicture(pictureData, targetIndex);
       }
     }
   };
 
   const pictureClickHandler = (evt) => {
     if (evt.target.classList.contains(`picture__img`)) {
-      const targetValue = evt.target.attributes[1].value;
-      openBigPicture(targetValue);
+      const pictureData = evt.target;
+      const targetIndex = getEventTargetIndex(pictureData);
+      openBigPicture(pictureData, targetIndex);
     }
   };
 
