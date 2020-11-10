@@ -21,7 +21,7 @@
     500: `Сервер не может обработать запрос`
   };
 
-  const createRequest = (type, url, onSuccess, onError, data, optionalArg) => {
+  const createRequest = (type, url, onSuccess, onError, data, dataElementIndex) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
     xhr.open(type, url);
@@ -35,22 +35,22 @@
             document.querySelector(`.error-message`).remove();
           }
           if (type === `GET`) {
-            onSuccess(xhr.response, optionalArg);
+            onSuccess(xhr.response, dataElementIndex);
           } else {
             onSuccess();
           }
           break;
 
         case StatusCode.BAD_REQUEST:
-          error = StatusText[`400`];
+          error = StatusText[StatusCode.BAD_REQUEST];
           break;
 
         case StatusCode.NOT_FOUND:
-          error = StatusText[`404`];
+          error = StatusText[StatusCode.NOT_FOUND];
           break;
 
         case StatusCode.SERVER_ERROR:
-          error = StatusText[`500`];
+          error = StatusText[StatusCode.SERVER_ERROR];
           break;
 
         default:
@@ -79,8 +79,8 @@
     }
   };
 
-  const loadData = (onLoad, onError, optionalArg) => {
-    createRequest(RequestType.GET, Url.GET, onLoad, onError, null, optionalArg);
+  const loadData = (onLoad, onError, dataElementIndex) => {
+    createRequest(RequestType.GET, Url.GET, onLoad, onError, null, dataElementIndex);
   };
 
   window.backend = {
