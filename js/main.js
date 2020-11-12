@@ -11,7 +11,7 @@
   commentCount.classList.add(`hidden`);
   commentsLoader.classList.add(`hidden`);
 
-  window.backend.load(window.picture.createGallery, window.util.showError);
+  window.backend.load(window.picture.createGallery, window.backendMessages.showGetRequestError);
   pictures.addEventListener(`click`, window.gallery.clickHandler, true);
   pictures.addEventListener(`keydown`, window.gallery.enterPressHandler, true);
   imgUploadField.addEventListener(`change`, window.uploadOverlay.changeHandler);

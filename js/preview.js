@@ -32,7 +32,7 @@
     likesAmount.textContent = pictureData.nextElementSibling.lastElementChild.textContent;
     commentsAmount.textContent = pictureData.nextElementSibling.firstElementChild.textContent;
     imageCaption.textContent = pictureData.getAttribute(`alt`);
-    window.backend.load(getCommentsList, window.util.showError, pictureIndex);
+    window.backend.load(getCommentsList, window.backendMessages.showGetRequestError, pictureIndex);
   };
 
   // Remove comments after preview closed
