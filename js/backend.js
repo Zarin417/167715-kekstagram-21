@@ -7,7 +7,8 @@
     POST: `POST`
   };
   const Url = {
-    GET: `https://21.javascript.pages.academy/kekstagram/data`
+    GET: `https://21.javascript.pages.academy/kekstagram/data`,
+    POST: `https://21.javascript.pages.academy/kekstagram`
   };
   const StatusCode = {
     OK: 200,
@@ -20,6 +21,9 @@
     404: `Запрашиваемые данные не найдены`,
     500: `Сервер не может обработать запрос`
   };
+
+  const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+  const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
 
   const createRequest = (type, url, onSuccess, onError, data, dataElementIndex) => {
     const xhr = new XMLHttpRequest();
@@ -36,8 +40,8 @@
           }
           if (type === `GET`) {
             onSuccess(xhr.response, dataElementIndex);
-          } else {
-            onSuccess();
+          } else if (type === `POST`) {
+            onSuccess(successMessageTemplate);
           }
           break;
 
@@ -57,17 +61,27 @@
           error = `Статус ответа: ${xhr.status} ${xhr.statusText}`;
       }
 
-      if (error) {
+      if (error && type === `GET`) {
         onError(error);
+      } else if (error && type === `POST`) {
+        onError(errorMessageTemplate);
       }
     });
 
     xhr.addEventListener(`error`, () => {
-      onError(`Произошла ошибка соединения`);
+      if (type === `GET`) {
+        onError(`Произошла ошибка соединения`);
+      } else {
+        onError(errorMessageTemplate);
+      }
     });
 
     xhr.addEventListener(`timeout`, () => {
-      onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
+      if (type === `GET`) {
+        onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
+      } else {
+        onError(errorMessageTemplate);
+      }
     });
 
     xhr.timeout = TIMEOUT;
@@ -83,7 +97,12 @@
     createRequest(RequestType.GET, Url.GET, onLoad, onError, null, dataElementIndex);
   };
 
+  const saveData = (onLoad, onError, data) => {
+    createRequest(RequestType.POST, Url.POST, onLoad, onError, data);
+  };
+
   window.backend = {
-    load: loadData
+    load: loadData,
+    save: saveData
   };
 })();

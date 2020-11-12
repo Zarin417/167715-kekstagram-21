@@ -20,14 +20,15 @@
 
   // Listener on submit
   const imgUploadFormHandler = (evt) => {
-    if (hashtagInput.validity.customError) {
-      evt.preventDefault();
-    }
+    evt.preventDefault();
+    window.backend.save(window.backendMessages.showMessage, window.backendMessages.showMessage, new FormData(imgUploadForm));
+    imgUploadOverlayClose();
   };
 
   // Add listeners for image upload overlay
   const imgUploadOverlayClose = () => {
     imgUploadField.value = ``;
+    imgUploadForm.reset();
     imgUploadOverlay.classList.add(`hidden`);
     document.body.classList.remove(`modal-open`);
     imgSizeScaleValue.value = `${MAX_IMG_SCALE}%`;
@@ -35,6 +36,13 @@
     imgUploadPreviewImage.style.filter = `none`;
     imgUploadPreviewImage.removeAttribute(`class`);
     filterDefault.checked = `true`;
+    document.removeEventListener(`keydown`, imgUploadOverlayEscPressHandler);
+    imgSizeScale.removeEventListener(`click`, window.uploadSize.setClickHandler);
+    effectsList.removeEventListener(`change`, window.uploadEffects.setItemClickHandler, true);
+    effectLevelPin.removeEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
+    hashtagInput.removeEventListener(`input`, window.validateHashtag.setHashtagHandler);
+    imgUploadForm.removeEventListener(`submit`, imgUploadFormHandler);
+    imgUploadCancel.removeEventListener(`click`, imgUploadOverlayCloseHandler);
   };
 
   const imgUploadOverlayEscPressHandler = (evt) => {
@@ -46,13 +54,6 @@
 
   const imgUploadOverlayCloseHandler = () => {
     imgUploadOverlayClose();
-    document.removeEventListener(`keydown`, imgUploadOverlayEscPressHandler);
-    imgSizeScale.removeEventListener(`click`, window.uploadSize.setClickHandler);
-    effectsList.removeEventListener(`change`, window.uploadEffects.setItemClickHandler);
-    effectLevelPin.removeEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
-    hashtagInput.removeEventListener(`input`, window.validateHashtag.setHashtagHandler);
-    imgUploadForm.removeEventListener(`submit`, imgUploadFormHandler);
-    imgUploadCancel.removeEventListener(`click`, imgUploadOverlayCloseHandler);
   };
 
   const imgUploadOverlayOpenHandler = () => {
