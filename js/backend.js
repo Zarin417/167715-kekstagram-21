@@ -40,7 +40,7 @@
           }
           if (type === `GET`) {
             onSuccess(xhr.response, dataElementIndex);
-          } else {
+          } else if (type === `POST`) {
             onSuccess(successMessageTemplate);
           }
           break;
@@ -69,11 +69,19 @@
     });
 
     xhr.addEventListener(`error`, () => {
-      onError(`Произошла ошибка соединения`);
+      if (type === `GET`) {
+        onError(`Произошла ошибка соединения`);
+      } else {
+        onError(errorMessageTemplate);
+      }
     });
 
     xhr.addEventListener(`timeout`, () => {
-      onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
+      if (type === `GET`) {
+        onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
+      } else {
+        onError(errorMessageTemplate);
+      }
     });
 
     xhr.timeout = TIMEOUT;
