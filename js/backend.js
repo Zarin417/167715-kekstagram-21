@@ -30,7 +30,7 @@
     xhr.responseType = `json`;
     xhr.open(type, url);
 
-    xhr.addEventListener(`load`, function () {
+    xhr.addEventListener(`load`, () => {
       let error;
 
       switch (xhr.status) {
