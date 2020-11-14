@@ -22,27 +22,16 @@
     500: `Сервер не может обработать запрос`
   };
 
-  const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
-  const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
-
-  const createRequest = (type, url, onSuccess, onError, data, dataElementIndex) => {
+  const createRequest = (onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
-    xhr.open(type, url);
 
     xhr.addEventListener(`load`, () => {
       let error;
 
       switch (xhr.status) {
         case StatusCode.OK:
-          if (document.querySelector(`.error-message`)) {
-            document.querySelector(`.error-message`).remove();
-          }
-          if (type === `GET`) {
-            onSuccess(xhr.response, dataElementIndex);
-          } else if (type === `POST`) {
-            onSuccess(successMessageTemplate);
-          }
+          onSuccess(xhr.response);
           break;
 
         case StatusCode.BAD_REQUEST:
@@ -61,44 +50,34 @@
           error = `Статус ответа: ${xhr.status} ${xhr.statusText}`;
       }
 
-      if (error && type === `GET`) {
+      if (error) {
         onError(error);
-      } else if (error && type === `POST`) {
-        onError(errorMessageTemplate);
       }
     });
 
     xhr.addEventListener(`error`, () => {
-      if (type === `GET`) {
-        onError(`Произошла ошибка соединения`);
-      } else {
-        onError(errorMessageTemplate);
-      }
+      onError(`Произошла ошибка соединения`);
     });
 
     xhr.addEventListener(`timeout`, () => {
-      if (type === `GET`) {
-        onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
-      } else {
-        onError(errorMessageTemplate);
-      }
+      onError(`Запрос не успел выполниться за ${xhr.timeout}мс`);
     });
 
     xhr.timeout = TIMEOUT;
-
-    if (data) {
-      xhr.send(data);
-    } else {
-      xhr.send();
-    }
+    return xhr;
   };
 
-  const loadData = (onLoad, onError, dataElementIndex) => {
-    createRequest(RequestType.GET, Url.GET, onLoad, onError, null, dataElementIndex);
+  const loadData = (onSuccess, onError) => {
+    const xhr = createRequest(onSuccess, onError);
+
+    xhr.open(RequestType.GET, Url.GET);
+    xhr.send();
   };
 
-  const saveData = (onLoad, onError, data) => {
-    createRequest(RequestType.POST, Url.POST, onLoad, onError, data);
+  const saveData = (onSuccess, onError, data) => {
+    const xhr = createRequest(onSuccess, onError);
+    xhr.open(RequestType.POST, Url.POST);
+    xhr.send(data);
   };
 
   window.backend = {

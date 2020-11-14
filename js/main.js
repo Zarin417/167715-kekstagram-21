@@ -6,16 +6,26 @@
   const bigPictureContainer = document.querySelector(`.big-picture`);
   const commentCount = bigPictureContainer.querySelector(`.social__comment-count`);
   const commentsLoader = bigPictureContainer.querySelector(`.comments-loader`);
-  const imagesFilters = document.querySelector(`.img-filters`);
 
   // Временно отключены по заданию
   commentCount.classList.add(`hidden`);
   commentsLoader.classList.add(`hidden`);
+  // _____________________________________
 
-  window.backend.load(window.picture.createGallery, window.backendMessages.showGetRequestError);
-  imagesFilters.classList.remove(`img-filters--inactive`);
-  imagesFilters.addEventListener(`click`, window.util.debounce(window.galleryFilters.clickHandler), true);
-  pictures.addEventListener(`click`, window.gallery.clickHandler, true);
-  pictures.addEventListener(`keydown`, window.gallery.enterPressHandler, true);
+  const onError = (message) => {
+    const node = document.createElement(`div`);
+    node.classList.add(`error-message`);
+    node.textContent = message;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+  };
+
+  const onSuccess = (data) => {
+    window.gallery.createGallery(data);
+    window.gallery.setListeners(data);
+    window.galleryFilters.setActions(data);
+  };
+
+  window.backend.load(onSuccess, onError);
+
   imgUploadField.addEventListener(`change`, window.uploadOverlay.changeHandler);
 })();

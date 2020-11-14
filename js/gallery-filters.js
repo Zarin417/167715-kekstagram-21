@@ -23,55 +23,81 @@
     });
   };
 
-  // Render random shuffle photos
-  const renderRandomPhotos = (array) => {
-    const randomPhotosArray = [];
+  // Render  default photos
+  const renderDefaultPhotos = window.util.debounce((data) => {
+    window.gallery.createGallery(data);
+  });
 
-    for (let i = array.length - 1; i > 0; i--) {
+  // Render random shuffle photos
+  const renderRandomPhotos = window.util.debounce((data) => {
+    const photos = Array.from(data);
+    const randomPhotos = [];
+
+    for (let i = photos.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [photos[i], photos[j]] = [photos[j], photos[i]];
     }
 
     for (let i = 0; i < RANDOM_PHOTOS_AMOUNT; i++) {
-      randomPhotosArray.push(array[i]);
+      randomPhotos.push(photos[i]);
     }
 
-    window.picture.createGallery(randomPhotosArray);
-  };
+    window.gallery.createGallery(randomPhotos);
+  });
 
 
   // Gallery rendering if selected discussed filter
-  const renderDiscussedPhotos = (array) => {
-    array.sort((a, b) => {
+  const renderDiscussedPhotos = window.util.debounce((data) => {
+    const photos = Array.from(data);
+
+    photos.sort((a, b) => {
       return b.comments.length - a.comments.length;
     });
 
-    window.picture.createGallery(array);
-  };
+    window.gallery.createGallery(photos);
+  });
 
-  // Event handler on filter change
-  const galleryFiltersClickHandler = (evt) => {
-    if (evt.target.className.indexOf(`img-filters__button--active`) === -1 && evt.target.nodeName === `BUTTON`) {
-      removeFiltersClassName();
-      evt.target.classList.add(`img-filters__button--active`);
-      clearGallery();
-
-      switch (evt.target) {
-        case defaultFilter:
-          window.backend.load(window.picture.createGallery, window.backendMessages.showGetRequestError);
-          break;
-        case randomFilter:
-          window.backend.load(renderRandomPhotos, window.backendMessages.showGetRequestError);
-          break;
-        case discussedFilter:
-          window.backend.load(renderDiscussedPhotos, window.backendMessages.showGetRequestError);
-          break;
-      }
+  // Filters action
+  const filtersActions = (eventTarget, data) => {
+    switch (eventTarget) {
+      case defaultFilter:
+        renderDefaultPhotos(data);
+        break;
+      case randomFilter:
+        renderRandomPhotos(data);
+        break;
+      case discussedFilter:
+        renderDiscussedPhotos(data);
+        break;
     }
   };
 
+  // Event handler on filter click
+  const filtersActionHandler = (evt, data) => {
+    if (!evt.target.className.includes(`img-filters__button--active`) && evt.target.nodeName === `BUTTON`) {
+      removeFiltersClassName();
+      evt.target.classList.add(`img-filters__button--active`);
+      clearGallery();
+      filtersActions(evt.target, data);
+    }
+  };
+
+  const setActionsOnFilters = (data) => {
+    galleryFilters.classList.remove(`img-filters--inactive`);
+
+    galleryFilters.addEventListener(`click`, (evt) => {
+      filtersActionHandler(evt, data);
+    }, true);
+
+    galleryFilters.addEventListener(`keydown`, (evt) => {
+      if (evt.key === `Enter`) {
+        filtersActionHandler(evt, data);
+      }
+    }, true);
+  };
+
   window.galleryFilters = {
-    clickHandler: galleryFiltersClickHandler
+    setActions: setActionsOnFilters
   };
 })();
 

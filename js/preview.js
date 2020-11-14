@@ -10,15 +10,15 @@
   const imageCaption = bigPictureContainer.querySelector(`.social__caption`);
 
   // Create and insert comments list for picture
-  const getCommentsList = (picturesData, pictureIndex) => {
+  const getCommentsList = (commentsData) => {
     const commentItemTemplate = commentsBlock.querySelector(`.social__comment`);
     let fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < picturesData[pictureIndex].comments.length; i++) {
+    for (let i = 0; i < commentsData.length; i++) {
       const commentItem = commentItemTemplate.cloneNode(true);
-      commentItem.querySelector(`.social__picture`).src = picturesData[pictureIndex].comments[i].avatar;
-      commentItem.querySelector(`.social__picture`).alt = picturesData[pictureIndex].comments[i].name;
-      commentItem.querySelector(`.social__text`).textContent = picturesData[pictureIndex].comments[i].message;
+      commentItem.querySelector(`.social__picture`).src = commentsData[i].avatar;
+      commentItem.querySelector(`.social__picture`).alt = commentsData[i].name;
+      commentItem.querySelector(`.social__text`).textContent = commentsData[i].message;
       fragment.appendChild(commentItem);
     }
 
@@ -26,13 +26,13 @@
   };
 
   // Create and show preview
-  const showBigPicture = (pictureData, pictureIndex) => {
-    bigPictureImg.src = pictureData.getAttribute(`src`);
-    bigPictureImg.alt = pictureData.getAttribute(`alt`);
-    likesAmount.textContent = pictureData.nextElementSibling.lastElementChild.textContent;
-    commentsAmount.textContent = pictureData.nextElementSibling.firstElementChild.textContent;
-    imageCaption.textContent = pictureData.getAttribute(`alt`);
-    window.backend.load(getCommentsList, window.backendMessages.showGetRequestError, pictureIndex);
+  const showBigPicture = (pictureData) => {
+    bigPictureImg.src = pictureData.url;
+    bigPictureImg.alt = pictureData.description;
+    likesAmount.textContent = `${pictureData.likes}`;
+    commentsAmount.textContent = `${pictureData.comments.length}`;
+    imageCaption.textContent = pictureData.description;
+    getCommentsList(pictureData.comments);
   };
 
   // Remove comments after preview closed

@@ -12,13 +12,13 @@
   const setDebounce = (cb) => {
     let lastTimeout = null;
 
-    return (data) => {
+    return (...parameters) => {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
 
       lastTimeout = window.setTimeout(() => {
-        cb(data);
+        cb(...parameters);
       }, DEBOUNCE_INTERVAL);
     };
   };
