@@ -25,21 +25,20 @@
 
   // Render  default photos
   const renderDefaultPhotos = window.util.debounce((data) => {
-    window.gallery.createGallery(data);
+    window.gallery.createContent(data);
   });
 
   // Render random shuffle photos
   const renderRandomPhotos = window.util.debounce((data) => {
-    const photos = Array.from(data);
     const randomPhotos = [];
 
-    for (let i = photos.length - 1; i > 0; i--) {
+    for (let i = data.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
-      [photos[i], photos[j]] = [photos[j], photos[i]];
+      [data[i], data[j]] = [data[j], data[i]];
     }
 
     for (let i = 0; i < RANDOM_PHOTOS_AMOUNT; i++) {
-      randomPhotos.push(photos[i]);
+      randomPhotos.push(data[i]);
     }
 
     window.gallery.createGallery(randomPhotos);
@@ -48,26 +47,26 @@
 
   // Gallery rendering if selected discussed filter
   const renderDiscussedPhotos = window.util.debounce((data) => {
-    const photos = Array.from(data);
-
-    photos.sort((a, b) => {
+    data.sort((a, b) => {
       return b.comments.length - a.comments.length;
     });
 
-    window.gallery.createGallery(photos);
+    window.gallery.createGallery(data);
   });
 
   // Filters action
   const filtersActions = (eventTarget, data) => {
+    const photos = Array.from(data);
+
     switch (eventTarget) {
       case defaultFilter:
-        renderDefaultPhotos(data);
+        renderDefaultPhotos(photos);
         break;
       case randomFilter:
-        renderRandomPhotos(data);
+        renderRandomPhotos(photos);
         break;
       case discussedFilter:
-        renderDiscussedPhotos(data);
+        renderDiscussedPhotos(photos);
         break;
     }
   };

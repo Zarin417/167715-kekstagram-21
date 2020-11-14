@@ -10,7 +10,6 @@
   // Временно отключены по заданию
   commentCount.classList.add(`hidden`);
   commentsLoader.classList.add(`hidden`);
-  // _____________________________________
 
   const onError = (message) => {
     const node = document.createElement(`div`);
@@ -20,7 +19,7 @@
   };
 
   const onSuccess = (data) => {
-    window.gallery.createGallery(data);
+    window.gallery.createContent(data);
     window.gallery.setListeners(data);
     window.galleryFilters.setActions(data);
   };

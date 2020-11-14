@@ -21,7 +21,7 @@
   };
 
   // Rendering of created pictures elements
-  const renderingPictures = (picturesData) => {
+  const renderPictures = (picturesData) => {
     const picturesBlock = pictures;
     const fragment = document.createDocumentFragment();
 
@@ -94,7 +94,7 @@
   };
 
   window.gallery = {
-    createGallery: renderingPictures,
+    createContent: renderPictures,
     setListeners: setListenersOnLoadPictures
   };
 })();
