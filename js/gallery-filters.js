@@ -41,7 +41,7 @@
       randomPhotos.push(data[i]);
     }
 
-    window.gallery.createGallery(randomPhotos);
+    window.gallery.createContent(randomPhotos);
   });
 
 
@@ -51,7 +51,7 @@
       return b.comments.length - a.comments.length;
     });
 
-    window.gallery.createGallery(data);
+    window.gallery.createContent(data);
   });
 
   // Filters action
