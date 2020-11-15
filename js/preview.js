@@ -54,7 +54,6 @@
         photoCommentsCount.firstChild.textContent = `${commentsAmount} из `;
         commentsLoader.classList.add(`hidden`);
         renderCommentsList(commentsData);
-        commentsLoader.removeEventListener(`click`, commentsLoadClickHandler, true);
       } else {
         commentsAmount += COMMENTS_STEP;
         photoCommentsCount.firstChild.textContent = `${commentsAmount} из `;
@@ -65,7 +64,7 @@
     };
 
     commentsLoadClickHandler();
-    commentsLoader.addEventListener(`click`, commentsLoadClickHandler, true);
+    commentsLoader.addEventListener(`click`, commentsLoadClickHandler);
   };
 
   window.preview = {
