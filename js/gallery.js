@@ -49,7 +49,6 @@
 
   const closeBigPicture = () => {
     document.body.classList.remove(`modal-open`);
-    window.preview.removeComments();
     bigPictureContainer.classList.add(`hidden`);
     document.removeEventListener(`keydown`, bigPictureEscPressHandler);
     bigPictureClose.removeEventListener(`click`, bigPictureCloseHandler);
