@@ -21,7 +21,7 @@
   // Listener on submit
   const imgUploadFormHandler = (evt) => {
     evt.preventDefault();
-    window.backend.save(window.backendMessages.showMessage, window.backendMessages.showMessage, new FormData(imgUploadForm));
+    window.backend.save(window.backendMessages.showSuccess, window.backendMessages.showError, new FormData(imgUploadForm));
     imgUploadOverlayClose();
   };
 
