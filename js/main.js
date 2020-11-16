@@ -1,9 +1,6 @@
 'use strict';
 
 (() => {
-  const pictures = document.querySelector(`.pictures`);
-  const imgUploadField = pictures.querySelector(`#upload-file`);
-
   const onError = (message) => {
     const node = document.createElement(`div`);
     node.classList.add(`error-message`);
@@ -12,12 +9,10 @@
   };
 
   const onSuccess = (data) => {
-    window.gallery.createContent(data);
-    window.gallery.setListeners(data);
-    window.galleryFilters.setActions(data);
+    window.gallery.renderPictures(data);
+    window.gallery.setListenersOnLoadPictures(data);
+    window.galleryFilters.setActionsOnFilters(data);
   };
 
-  window.backend.load(onSuccess, onError);
-
-  imgUploadField.addEventListener(`change`, window.uploadOverlay.changeHandler);
+  window.backend.loadData(onSuccess, onError);
 })();

@@ -41,28 +41,28 @@
   // Add listeners for open and close big picture
   const openBigPicture = (pictureTarget) => {
     document.body.classList.add(`modal-open`);
-    window.preview.show(pictureTarget);
+    window.preview.showBigPicture(pictureTarget);
     bigPictureContainer.classList.remove(`hidden`);
-    bigPictureClose.addEventListener(`click`, bigPictureCloseHandler);
-    document.addEventListener(`keydown`, bigPictureEscPressHandler);
+    bigPictureClose.addEventListener(`click`, bigPictureCloseClickHandler);
+    document.addEventListener(`keydown`, documentEscPressHandler);
   };
 
   const closeBigPicture = () => {
     document.body.classList.remove(`modal-open`);
     bigPictureContainer.classList.add(`hidden`);
-    document.removeEventListener(`keydown`, bigPictureEscPressHandler);
-    bigPictureClose.removeEventListener(`click`, bigPictureCloseHandler);
+    document.removeEventListener(`keydown`, documentEscPressHandler);
+    bigPictureClose.removeEventListener(`click`, bigPictureCloseClickHandler);
   };
 
-  const bigPictureEscPressHandler = (evt) => {
-    if (evt.key === `Escape`) {
+  const documentEscPressHandler = (evt) => {
+    if (evt.key === window.util.KeyboardKeyName.ESCAPE) {
       evt.preventDefault();
       closeBigPicture();
     }
   };
 
   const pictureEnterPressHandler = (evt, data) => {
-    if (evt.key === `Enter`) {
+    if (evt.key === window.util.KeyboardKeyName.ENTER) {
       if (evt.target.classList.contains(`picture`)) {
         evt.preventDefault();
         const targetIndex = getEventTargetIndex(evt.target.childNodes[1]);
@@ -78,7 +78,7 @@
     }
   };
 
-  const bigPictureCloseHandler = () => {
+  const bigPictureCloseClickHandler = () => {
     closeBigPicture();
   };
 
@@ -93,7 +93,7 @@
   };
 
   window.gallery = {
-    createContent: renderPictures,
-    setListeners: setListenersOnLoadPictures
+    renderPictures,
+    setListenersOnLoadPictures
   };
 })();

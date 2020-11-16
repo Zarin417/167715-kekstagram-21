@@ -26,7 +26,7 @@
     }
   };
 
-  const imgSizeScaleHandler = (evt) => {
+  const imgSizeScaleClickHandler = (evt) => {
     const scaleValue = Number(imgSizeScaleValue.value.match(/\d+/));
 
     if (evt.target === imgSizeScaleSmaller) {
@@ -37,6 +37,6 @@
   };
 
   window.uploadSize = {
-    setClickHandler: imgSizeScaleHandler
+    imgSizeScaleClickHandler
   };
 })();

@@ -6,21 +6,28 @@
   const BRIGHTNESS_MIN_VALUE = 1;
   const BRIGHTNESS_MAX_VALUE = 3;
   const PIN_DEFAULT_POSITION = 0;
+  const EffectType = {
+    CHROME: `effects__preview--chrome`,
+    SEPIA: `effects__preview--sepia`,
+    MARVIN: `effects__preview--marvin`,
+    PHOBOS: `effects__preview--phobos`,
+    HEAT: `effects__preview--heat`
+  };
   const imgUploadForm = document.querySelector(`#upload-select-image`);
   const imgUploadPreview = imgUploadForm.querySelector(`.img-upload__preview`);
   const imgUploadPreviewImage = imgUploadPreview.querySelector(`img`);
   const effectLevel = imgUploadForm.querySelector(`.effect-level`);
   const levelValue = effectLevel.querySelector(`.effect-level__value`);
   const levelLine = effectLevel.querySelector(`.effect-level__line`);
-  const levelPin = levelLine.querySelector(`.effect-level__pin`);
+  const effectLevelPin = levelLine.querySelector(`.effect-level__pin`);
   const levelDepth = levelLine.querySelector(`.effect-level__depth`);
 
   // Listener for image filter icons
-  const effectListHandler = (evt) => {
+  const effectListChangeHandler = (evt) => {
     if (evt.target.matches(`input[type="radio"]`)) {
       imgUploadPreviewImage.removeAttribute(`class`);
       levelValue.setAttribute(`value`, `0`);
-      levelPin.style.left = `${PIN_DEFAULT_POSITION}`;
+      effectLevelPin.style.left = `${PIN_DEFAULT_POSITION}`;
       levelDepth.style.width = `${PIN_DEFAULT_POSITION}`;
       imgUploadPreviewImage.style.filter = `none`;
       if (evt.target.attributes[4].value === `none`) {
@@ -37,23 +44,23 @@
     const effectValue = levelValue.getAttribute(`value`);
 
     switch (imgClass) {
-      case `effects__preview--chrome`:
+      case EffectType.CHROME:
         imgUploadPreviewImage.style.filter = `grayscale(${effectValue}%)`;
         break;
 
-      case `effects__preview--sepia`:
+      case EffectType.SEPIA:
         imgUploadPreviewImage.style.filter = `sepia(${effectValue}%)`;
         break;
 
-      case `effects__preview--marvin`:
+      case EffectType.MARVIN:
         imgUploadPreviewImage.style.filter = `invert(${effectValue}%)`;
         break;
 
-      case `effects__preview--phobos`:
+      case EffectType.PHOBOS:
         imgUploadPreviewImage.style.filter = `blur(${Math.floor(effectValue / MAX_EFFECT_PERCENTAGE * BLUR_MAX_AMOUNT_VALUE)}px)`;
         break;
 
-      case `effects__preview--heat`:
+      case EffectType.HEAT:
         imgUploadPreviewImage.style.filter = `brightness(
         ${(effectValue < (MAX_EFFECT_PERCENTAGE / BRIGHTNESS_MAX_VALUE)) ? BRIGHTNESS_MIN_VALUE : Math.ceil(effectValue / MAX_EFFECT_PERCENTAGE * BRIGHTNESS_MAX_VALUE)}
         )`;
@@ -62,14 +69,14 @@
   };
 
   // Listener for effect level pin
-  const levelPinMouseDownHandler = (evt) => {
+  const effectLevelPinMouseDownHandler = (evt) => {
     const PIN_MAX_POSITION = parseInt(levelLine.offsetWidth, 10);
     let startX = evt.clientX;
 
-    const levelPinMouseMoveHandler = (moveEvt) => {
+    const documentMouseMoveHandler = (moveEvt) => {
       moveEvt.preventDefault();
       let shiftX = startX - moveEvt.clientX;
-      let newPosition = levelPin.offsetLeft - shiftX;
+      let newPosition = effectLevelPin.offsetLeft - shiftX;
 
       startX = moveEvt.clientX;
 
@@ -79,24 +86,24 @@
         newPosition = PIN_MAX_POSITION;
       }
 
-      levelPin.style.left = `${newPosition}px`;
+      effectLevelPin.style.left = `${newPosition}px`;
       levelDepth.style.width = `${newPosition}px`;
       levelValue.setAttribute(`value`, `${Math.round((newPosition / PIN_MAX_POSITION) * MAX_EFFECT_PERCENTAGE)}`);
       setEffectLevel();
     };
 
-    const levelPinMouseupHandler = (downEvt) => {
+    const documentMouseupHandler = (downEvt) => {
       downEvt.preventDefault();
-      document.removeEventListener(`mousemove`, levelPinMouseMoveHandler);
-      document.removeEventListener(`mouseup`, levelPinMouseupHandler);
+      document.removeEventListener(`mousemove`, documentMouseMoveHandler);
+      document.removeEventListener(`mouseup`, documentMouseupHandler);
     };
 
-    document.addEventListener(`mousemove`, levelPinMouseMoveHandler);
-    document.addEventListener(`mouseup`, levelPinMouseupHandler);
+    document.addEventListener(`mousemove`, documentMouseMoveHandler);
+    document.addEventListener(`mouseup`, documentMouseupHandler);
   };
 
   window.uploadEffects = {
-    setItemClickHandler: effectListHandler,
-    setPinMouseDownHandler: levelPinMouseDownHandler
+    effectListChangeHandler,
+    effectLevelPinMouseDownHandler
   };
 })();

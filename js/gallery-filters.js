@@ -24,12 +24,12 @@
   };
 
   // Render  default photos
-  const renderDefaultPhotos = window.util.debounce((data) => {
-    window.gallery.createContent(data);
+  const renderDefaultPhotos = window.util.setDebounce((data) => {
+    window.gallery.renderPictures(data);
   });
 
   // Render random shuffle photos
-  const renderRandomPhotos = window.util.debounce((data) => {
+  const renderRandomPhotos = window.util.setDebounce((data) => {
     const randomPhotos = [];
 
     for (let i = data.length - 1; i > 0; i--) {
@@ -41,17 +41,17 @@
       randomPhotos.push(data[i]);
     }
 
-    window.gallery.createContent(randomPhotos);
+    window.gallery.renderPictures(randomPhotos);
   });
 
 
   // Gallery rendering if selected discussed filter
-  const renderDiscussedPhotos = window.util.debounce((data) => {
+  const renderDiscussedPhotos = window.util.setDebounce((data) => {
     data.sort((a, b) => {
       return b.comments.length - a.comments.length;
     });
 
-    window.gallery.createContent(data);
+    window.gallery.renderPictures(data);
   });
 
   // Filters action
@@ -89,14 +89,13 @@
     }, true);
 
     galleryFilters.addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter`) {
+      if (evt.key === window.util.KeyboardKeyName.ENTER) {
         filtersActionHandler(evt, data);
       }
     }, true);
   };
 
   window.galleryFilters = {
-    setActions: setActionsOnFilters
+    setActionsOnFilters
   };
 })();
-

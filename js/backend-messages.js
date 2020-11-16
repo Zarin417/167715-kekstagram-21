@@ -1,5 +1,6 @@
 'use strict';
 (() => {
+  const TYPE_MESSAGE_ERROR = `error`;
   const pageMain = document.querySelector(`main`);
   const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
   const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
@@ -14,42 +15,42 @@
 
     messageType = message.className;
 
-    if (messageType === `error`) {
+    if (messageType === TYPE_MESSAGE_ERROR) {
       errorTitle.textContent = `${errorText}`;
     }
 
     messageCloseBtn = message.querySelector(`button`);
     fragment.appendChild(message);
     pageMain.appendChild(fragment);
-    document.addEventListener(`click`, messageClickHandler, true);
-    document.addEventListener(`keydown`, messageEscapePressHandler, true);
-    messageCloseBtn.addEventListener(`click`, closeBtnClickHandler, true);
+    document.addEventListener(`click`, documentClickHandler, true);
+    document.addEventListener(`keydown`, documentKeyDownHandler, true);
+    messageCloseBtn.addEventListener(`click`, messageCloseBtnClickHandler, true);
   };
 
   const closeMessage = () => {
     pageMain.querySelector(`.${messageType}`).remove();
-    messageCloseBtn.removeEventListener(`click`, closeBtnClickHandler, true);
-    document.removeEventListener(`click`, messageClickHandler, true);
-    document.removeEventListener(`keydown`, messageEscapePressHandler, true);
+    messageCloseBtn.removeEventListener(`click`, messageCloseBtnClickHandler, true);
+    document.removeEventListener(`click`, documentClickHandler, true);
+    document.removeEventListener(`keydown`, documentKeyDownHandler, true);
     messageType = null;
     messageCloseBtn = null;
   };
 
   // Event listener on click outside window
-  const messageClickHandler = (evt) => {
+  const documentClickHandler = (evt) => {
     if (evt.target.className === messageType) {
       closeMessage();
     }
   };
 
   // Event listener on click close button
-  const closeBtnClickHandler = () => {
+  const messageCloseBtnClickHandler = () => {
     closeMessage();
   };
 
   // Event listener on Escape press
-  const messageEscapePressHandler = (evt) => {
-    if (evt.key === `Escape`) {
+  const documentKeyDownHandler = (evt) => {
+    if (evt.key === window.util.KeyboardKeyName.ESCAPE) {
       evt.preventDefault();
       closeMessage();
     }
@@ -64,7 +65,7 @@
   };
 
   window.backendMessages = {
-    showSuccess: showSuccessMessage,
-    showError: showErrorMessage
+    showSuccessMessage,
+    showErrorMessage
   };
 })();

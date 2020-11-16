@@ -37,23 +37,24 @@
 
   // Create and show preview
   const showBigPicture = (pictureData) => {
-    let commentsData = pictureData.comments;
+    let {url, likes, description, comments: commentsData} = pictureData;
     let commentsStartIndex = 0;
     let commentsAmount = 0;
 
-    bigPictureImg.src = pictureData.url;
-    bigPictureImg.alt = pictureData.description;
-    likesAmount.textContent = `${pictureData.likes}`;
+    bigPictureImg.src = url;
+    bigPictureImg.alt = description;
+    likesAmount.textContent = `${likes}`;
     commentsCount.textContent = `${commentsData.length}`;
-    imageCaption.textContent = pictureData.description;
+    imageCaption.textContent = description;
     removeCommentsList();
 
     const commentsLoadClickHandler = () => {
-      if (commentsData.length < COMMENTS_STEP) {
+      if (commentsData.length <= COMMENTS_STEP) {
         commentsAmount += commentsData.length;
         photoCommentsCount.firstChild.textContent = `${commentsAmount} из `;
         commentsLoader.classList.add(`hidden`);
         renderCommentsList(commentsData);
+        commentsLoader.removeEventListener(`click`, commentsLoadClickHandler);
       } else {
         commentsAmount += COMMENTS_STEP;
         photoCommentsCount.firstChild.textContent = `${commentsAmount} из `;
@@ -68,6 +69,6 @@
   };
 
   window.preview = {
-    show: showBigPicture
+    showBigPicture
   };
 })();
