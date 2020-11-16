@@ -1,11 +1,9 @@
 'use strict';
 (() => {
   const DEBOUNCE_INTERVAL = 500;
-
-  // Get a random number in a given range
-  const getRandomInteger = (min, max) => {
-    const randomInteger = min + Math.random() * (max + 1 - min);
-    return Math.floor(randomInteger);
+  const KeyboardKeyName = {
+    ESCAPE: `Escape`,
+    ENTER: `Enter`
   };
 
   // Debounce
@@ -25,7 +23,7 @@
 
 
   window.util = {
-    getRandomInt: getRandomInteger,
-    debounce: setDebounce
+    KeyboardKeyName,
+    setDebounce
   };
 })();

@@ -7,7 +7,7 @@
   const imgUploadOverlay = imgUploadForm.querySelector(`.img-upload__overlay`);
   const imgUploadCancel = imgUploadOverlay.querySelector(`#upload-cancel`);
   const imgUploadDescription = imgUploadOverlay.querySelector(`.text__description`);
-  const hashtagInput = imgUploadOverlay.querySelector(`.text__hashtags`);
+  const hashtagField = imgUploadOverlay.querySelector(`.text__hashtags`);
   const effectsList = imgUploadForm.querySelector(`.effects__list`);
   const filterDefault = effectsList.querySelector(`#effect-none`);
   const imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
@@ -18,14 +18,20 @@
   const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
   const effectLevelPin = effectLevelLine.querySelector(`.effect-level__pin`);
 
-  // Listener on submit
-  const imgUploadFormHandler = (evt) => {
-    evt.preventDefault();
-    window.backend.save(window.backendMessages.showSuccess, window.backendMessages.showError, new FormData(imgUploadForm));
-    imgUploadOverlayClose();
+  // Add listeners for image upload overlay
+  const imgUploadOverlayOpen = () => {
+    imgUploadOverlay.classList.remove(`hidden`);
+    document.body.classList.add(`modal-open`);
+    effectLevel.classList.add(`hidden`);
+    document.addEventListener(`keydown`, documentEscPressHandler);
+    imgUploadCancel.addEventListener(`click`, imgUploadCancelClickHandler);
+    imgSizeScale.addEventListener(`click`, window.uploadSize.imgSizeScaleClickHandler);
+    effectsList.addEventListener(`change`, window.uploadEffects.effectListChangeHandler, true);
+    effectLevelPin.addEventListener(`mousedown`, window.uploadEffects.effectLevelPinMouseDownHandler);
+    hashtagField.addEventListener(`input`, window.validateHashtag.hashtagFieldInputHandler);
+    imgUploadForm.addEventListener(`submit`, imgUploadFormSubmitHandler);
   };
 
-  // Add listeners for image upload overlay
   const imgUploadOverlayClose = () => {
     imgUploadField.value = ``;
     imgUploadForm.reset();
@@ -36,40 +42,37 @@
     imgUploadPreviewImage.style.filter = `none`;
     imgUploadPreviewImage.removeAttribute(`class`);
     filterDefault.checked = `true`;
-    document.removeEventListener(`keydown`, imgUploadOverlayEscPressHandler);
-    imgSizeScale.removeEventListener(`click`, window.uploadSize.setClickHandler);
-    effectsList.removeEventListener(`change`, window.uploadEffects.setItemClickHandler, true);
-    effectLevelPin.removeEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
-    hashtagInput.removeEventListener(`input`, window.validateHashtag.setHashtagHandler);
-    imgUploadForm.removeEventListener(`submit`, imgUploadFormHandler);
-    imgUploadCancel.removeEventListener(`click`, imgUploadOverlayCloseHandler);
+    hashtagField.classList.remove(`invalid__text`);
+    document.removeEventListener(`keydown`, documentEscPressHandler);
+    imgSizeScale.removeEventListener(`click`, window.uploadSize.imgSizeScaleClickHandler);
+    effectsList.removeEventListener(`change`, window.uploadEffects.effectListChangeHandler, true);
+    effectLevelPin.removeEventListener(`mousedown`, window.uploadEffects.effectLevelPinMouseDownHandler);
+    hashtagField.removeEventListener(`input`, window.validateHashtag.hashtagFieldInputHandler);
+    imgUploadForm.removeEventListener(`submit`, imgUploadFormSubmitHandler);
+    imgUploadCancel.removeEventListener(`click`, imgUploadCancelClickHandler);
   };
 
-  const imgUploadOverlayEscPressHandler = (evt) => {
-    if (evt.key === `Escape` && document.activeElement !== hashtagInput && document.activeElement !== imgUploadDescription) {
+  const documentEscPressHandler = (evt) => {
+    if (evt.key === window.util.KeyboardKeyName.ESCAPE && document.activeElement !== hashtagField && document.activeElement !== imgUploadDescription) {
       evt.preventDefault();
       imgUploadOverlayClose();
     }
   };
 
-  const imgUploadOverlayCloseHandler = () => {
+  const imgUploadCancelClickHandler = () => {
     imgUploadOverlayClose();
   };
 
-  const imgUploadOverlayOpenHandler = () => {
-    imgUploadOverlay.classList.remove(`hidden`);
-    document.body.classList.add(`modal-open`);
-    effectLevel.classList.add(`hidden`);
-    document.addEventListener(`keydown`, imgUploadOverlayEscPressHandler);
-    imgUploadCancel.addEventListener(`click`, imgUploadOverlayCloseHandler);
-    imgSizeScale.addEventListener(`click`, window.uploadSize.setClickHandler);
-    effectsList.addEventListener(`change`, window.uploadEffects.setItemClickHandler, true);
-    effectLevelPin.addEventListener(`mousedown`, window.uploadEffects.setPinMouseDownHandler);
-    hashtagInput.addEventListener(`input`, window.validateHashtag.setHashtagHandler);
-    imgUploadForm.addEventListener(`submit`, imgUploadFormHandler);
+  const imgUploadFieldChangeHandler = () => {
+    imgUploadOverlayOpen();
   };
 
-  window.uploadOverlay = {
-    changeHandler: imgUploadOverlayOpenHandler
+  // Listener on submit
+  const imgUploadFormSubmitHandler = (evt) => {
+    evt.preventDefault();
+    window.backend.saveData(window.backendMessages.showSuccessMessage, window.backendMessages.showErrorMessage, new FormData(imgUploadForm));
+    imgUploadOverlayClose();
   };
+
+  imgUploadField.addEventListener(`change`, imgUploadFieldChangeHandler);
 })();
