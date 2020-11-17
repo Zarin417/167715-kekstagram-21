@@ -1,5 +1,6 @@
 'use strict';
 
+const VALID_FILE_MIME_TYPES = [`image/png`, `image/jpeg`, `image/giff`];
 const MAX_IMG_SCALE = 100;
 const imgUploadForm = document.querySelector(`#upload-select-image`);
 const imgUploadField = imgUploadForm.querySelector(`#upload-file`);
@@ -8,6 +9,7 @@ const imgUploadCancel = imgUploadOverlay.querySelector(`#upload-cancel`);
 const imgUploadDescription = imgUploadOverlay.querySelector(`.text__description`);
 const hashtagField = imgUploadOverlay.querySelector(`.text__hashtags`);
 const effectsList = imgUploadForm.querySelector(`.effects__list`);
+const effectsPreviews = effectsList.querySelectorAll(`.effects__preview`);
 const filterDefault = effectsList.querySelector(`#effect-none`);
 const imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
 const imgUploadPreviewImage = imgUploadPreview.querySelector(`img`);
@@ -62,11 +64,30 @@ const imgUploadCancelClickHandler = () => {
   imgUploadOverlayClose();
 };
 
+// Handler on upload user's image
 const imgUploadFieldChangeHandler = () => {
-  imgUploadOverlayOpen();
+  const file = imgUploadField.files[0];
+
+  const matches = VALID_FILE_MIME_TYPES.some((type) => {
+    return file.type === type;
+  });
+
+  if (matches) {
+    const reader = new FileReader();
+
+    reader.addEventListener(`load`, () => {
+      imgUploadPreviewImage.src = `${reader.result}`;
+      effectsPreviews.forEach((element) => {
+        element.style.backgroundImage = `url(${reader.result})`;
+      });
+    });
+
+    reader.readAsDataURL(file);
+    imgUploadOverlayOpen();
+  }
 };
 
-// Listener on submit
+// Handler on submit event
 const imgUploadFormSubmitHandler = (evt) => {
   evt.preventDefault();
   window.backend.saveData(window.backendMessages.showSuccessMessage, window.backendMessages.showErrorMessage, new FormData(imgUploadForm));
